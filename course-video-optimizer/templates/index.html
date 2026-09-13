@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>课程录屏画质优化器</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header>
+  <h1>🎬 课程录屏画质优化器</h1>
+  <div id="ff-status" class="badge badge-loading">检测 ffmpeg 中…</div>
+</header>
+
+<div id="ff-alert" class="alert hidden">
+  <strong>⚠️ ffmpeg 不可用：</strong><span id="ff-error"></span>
+  <p>请按以下任一方式修复，然后点击「重新检测」：</p>
+  <ol id="ff-instructions"></ol>
+  <button id="btn-recheck" class="btn">🔄 重新检测</button>
+</div>
+
+<main>
+  <!-- 1. 上传 -->
+  <section class="card">
+    <h2><span class="step">1</span> 上传录屏片段</h2>
+    <div id="dropzone">
+      <p>点击选择或拖拽视频文件到此处</p>
+      <p class="hint">支持 mp4 / mov / mkv / avi / webm / ts / flv / m4v</p>
+      <input type="file" id="file-input" accept="video/*" hidden>
+    </div>
+    <div id="file-info" class="info-grid hidden"></div>
+  </section>
+
+  <!-- 2. 参数 -->
+  <section class="card" id="param-card">
+    <h2><span class="step">2</span> 调整优化参数</h2>
+    <div class="controls">
+      <div class="control">
+        <label>文字锐化 <output id="sharpen-val">1.0</output></label>
+        <input type="range" id="sharpen" min="0" max="3" step="0.1" value="1.0">
+        <p class="hint">增强幻灯片 / 代码文字边缘（unsharp）</p>
+      </div>
+      <div class="control">
+        <label>背景降噪 <output id="denoise-val">4.0</output></label>
+        <input type="range" id="denoise" min="0" max="10" step="0.5" value="4.0">
+        <p class="hint">抑制录屏噪点与压缩块效应（hqdn3d）</p>
+      </div>
+      <div class="control">
+        <label>音画片段长度（秒）</label>
+        <input type="number" id="duration" min="0" step="1" value="10">
+        <p class="hint">截取前 N 秒生成预览；填 0 处理整段</p>
+      </div>
+      <div class="control">
+        <label>输出分辨率</label>
+        <select id="resolution">
+          <option value="original">原始分辨率</option>
+          <option value="1080p" selected>1920 × 1080</option>
+          <option value="720p">1280 × 720</option>
+          <option value="480p">854 × 480</option>
+        </select>
+        <p class="hint">等比缩放，不足部分补黑边</p>
+      </div>
+    </div>
+    <button id="btn-process" class="btn btn-primary" disabled>✨ 生成预览</button>
+    <div id="progress" class="hidden">⏳ 正在调用 ffmpeg 处理，请稍候…</div>
+    <div id="error-box" class="error hidden"></div>
+  </section>
+
+  <!-- 3. 预览与下载 -->
+  <section class="card hidden" id="result-card">
+    <h2><span class="step">3</span> 预览与导出</h2>
+    <video id="preview" controls preload="metadata"></video>
+    <p class="hint" id="output-meta"></p>
+    <h3>ffmpeg 命令行</h3>
+    <pre id="command-text" class="code"></pre>
+    <div class="downloads">
+      <a id="dl-command" class="btn" download>📜 下载命令行 (.sh)</a>
+      <a id="dl-report" class="btn" download>📊 下载参数报告 (.md)</a>
+      <a id="dl-video" class="btn" download>🎞️ 下载预览视频 (.mp4)</a>
+    </div>
+  </section>
+</main>
+
+<footer>课程录屏画质优化器 · 基于 ffmpeg (unsharp / hqdn3d / scale)</footer>
+<script src="/static/app.js"></script>
+</body>
+</html>
